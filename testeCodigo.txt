@@ -1,0 +1,6 @@
+if (x = 10) { 
+    print(x); 
+}
+while (x) {
+    x = x - 1;
+}
