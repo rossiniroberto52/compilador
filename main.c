@@ -7,7 +7,6 @@
 #include <fcntl.h>   
 #include <unistd.h>  
 
-
 typedef enum {
     TOKEN_IDENTIFIER, TOKEN_NUMBER,
     TOKEN_ASSIGN,     
@@ -31,6 +30,9 @@ typedef struct {
     int length;
     int line;
 } Token;
+
+Token currentToken;
+Token previusToken;
 
 typedef enum{
     NODE_NUMBER,
@@ -128,6 +130,70 @@ static Token makeToken(TokenType type) {
     token.length = (int)(lexer.current - lexer.start); 
     token.line = lexer.line;
     return token;
+}
+
+static void advanceToken(){
+    previusToken = currentToken;
+    for(;;){
+        currentToken = scanToken();
+        if (currentToken.type != TOKEN_ERROR) break;
+
+        fprintf(stderr, "Error: Unexpected character '%.*s' at line %d.\n", currentToken.length, currentToken.start, currentToken.line);
+        exit(65);
+    }
+}
+
+static void consume(TokenType type, const char* message){
+    if(currentToken.type == type){
+        advanceToken();
+        return;
+    }
+    fprintf(stderr, "Error: %s at line %d.\n", message, currentToken.line);
+    exit(65);
+}
+
+static ASTNode* parseTerm(Arena* arena);
+static ASTNode* parseFactor(Arena* arena);
+
+static ASTNode* parseExpression(Arena* arena){
+    ASTNode* node = parseTerm(arena);
+    while(currentToken.type == TOKEN_PLUS || currentToken.type == TOKEN_MINUS){
+        TokenType  operator =  currentToken.type;
+        advanceToken();
+
+        ASTNode* rightnode = parseTerm(arena);
+
+        ASTNode* binaryNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+
+        binaryNode->type = NODE_BINARY_OP;
+        binaryNode->as.binaryOp.left = node;
+        binaryNode->as.binaryOp.right = rightnode;
+        binaryNode->as.binaryOp.operator = operator;
+        node = binaryNode;
+    }
+    return node;
+}
+
+static ASTNode* parseTerm(Arena* arena){
+    ASTNode* node = parseFactor(arena);
+
+    while(currentToken.type == TOKEN_STAR || currentToken.type == TOKEN_SLASH){
+        TokenType operator = currentToken.type;
+        advanceToken();
+
+        ASTNode* rigthtNode = parseFactor(arena);
+
+        ASTNode* binaryNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        
+        binaryNode->type = NODE_BINARY_OP;
+        binaryNode->as.binaryOp.left = node;
+        binaryNode-> as.binaryOp.right = rigthtNode;
+        binaryNode->as.binaryOp.operator = operator;
+
+        node = binaryNode;
+    }
+
+    return node;
 }
 
 static void skipSpace() {
