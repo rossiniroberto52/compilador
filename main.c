@@ -411,10 +411,10 @@ int main(int argc, const char* argv[]) {
 
     advanceToken();
 
-    ASTNode* raiz = parseExpression(&arena);
+    ASTNode* root = parseExpression(&arena);
 
     printf("--- ABSTRACT TREE ---\n");
-    printAST(raiz, 0);
+    printAST(root, 0);
 
     freeArena(&arena);
     munmap(sourceCode, fileSize);
