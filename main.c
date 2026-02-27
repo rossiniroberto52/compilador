@@ -196,6 +196,48 @@ static ASTNode* parseTerm(Arena* arena){
     return node;
 }
 
+static ASTNode* parseFactor(Arena* arena){
+    if(currentToken.type == TOKEN_NUMBER){
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_NUMBER;
+
+        char buffer[64];
+        snprintf(buffer, sizeof(buffer), "%.*s", currentToken.length, currentToken.start);
+        node->as.numberValue = atoi(buffer);
+    }
+    if(currentToken.type == TOKEN_IDENTIFIER){
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_IDENTIFIER;
+
+        node->as.identifier.name = currentToken.start;
+        node->as.identifier.lenght = currentToken.length;
+
+        advcanceToken();
+        return node;
+    }
+
+    if(currentToken.type == TOKEN_IDENTIFIER){
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_IDENTIFIER;
+
+        node->as.identifier.name = currentToken.start;
+        node->as.identifier.lenght = currentToken.length;
+
+        advanceToken();
+        return node;
+    }
+
+    if(currentToken.type == TOKEN_LPAREN){
+        advanceToken();
+        ASTNode* node = parseExpression(arena);
+        consume(TOKEN_RPAREN, "Expected ')' after expression");
+        return node;
+    }
+
+    fprintf(stderr, "Error: Expected expression at line %d.\n", currentToken.line);
+    exit(65);
+}
+
 static void skipSpace() {
     for(;;) {
         char c = peek(); 
