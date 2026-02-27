@@ -95,6 +95,10 @@ typedef struct {
 
 Lexer lexer; 
 
+Token scanToken();
+static void advanceToken();
+void* arenaAlloc(Arena* arena, size_t size);
+
 void initLexer(const char* source, size_t length) {
     lexer.start = source;
     lexer.current = source;
@@ -204,18 +208,9 @@ static ASTNode* parseFactor(Arena* arena){
         char buffer[64];
         snprintf(buffer, sizeof(buffer), "%.*s", currentToken.length, currentToken.start);
         node->as.numberValue = atoi(buffer);
-    }
-    if(currentToken.type == TOKEN_IDENTIFIER){
-        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
-        node->type = NODE_IDENTIFIER;
-
-        node->as.identifier.name = currentToken.start;
-        node->as.identifier.lenght = currentToken.length;
-
-        advcanceToken();
+        advanceToken();
         return node;
     }
-
     if(currentToken.type == TOKEN_IDENTIFIER){
         ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
         node->type = NODE_IDENTIFIER;
@@ -368,9 +363,41 @@ void freeArena(Arena* arena){
     arena->capacity = 0;
 }
 
+void printAST(ASTNode* node, int depth){
+    if(node == NULL) return;
+    for(int i = 0; i < depth; i++){
+        printf("  ");
+    }
+
+    switch(node->type){
+        case NODE_NUMBER:
+            printf("Number: %d\n", node->as.numberValue);
+            break;
+
+        case NODE_IDENTIFIER:
+            printf("Variable: %.*s\n", node->as.identifier.lenght, node->as.identifier.name);
+            break;
+        case NODE_BINARY_OP:{
+            char op = '?';
+            if(node->as.binaryOp.operator == TOKEN_PLUS) op = '+';
+            else if(node->as.binaryOp.operator == TOKEN_MINUS) op = '-';
+            else if(node->as.binaryOp.operator == TOKEN_STAR) op = '*';
+            else if(node->as.binaryOp.operator == TOKEN_SLASH) op = '/';
+            printf("BinaryOp: [%c]\n", op);
+            
+            printAST(node->as.binaryOp.left, depth + 1);
+            printAST(node->as.binaryOp.right, depth + 1);
+            break;
+        }
+
+        default:
+            printf("Unknown node type\n");
+    }
+}
+
 int main(int argc, const char* argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "Usage: compilador <path_to_source>\n");
+        fprintf(stderr, "Usage: compilator <path_to_source>\n");
         exit(64);
     }
 
@@ -378,23 +405,18 @@ int main(int argc, const char* argv[]) {
     char* sourceCode = mapFileToMem(argv[1], &fileSize);
 
     initLexer(sourceCode, fileSize);
+    
+    Arena arena;
+    initArena(&arena, 1024 * 1024); 
 
-    int line = -1;
-    for (;;) {
-        Token token = scanToken();
+    advanceToken();
 
-        if (token.line != line) {
-            printf("%4d ", token.line);
-            line = token.line;
-        } else {
-            printf("   | ");
-        }
+    ASTNode* raiz = parseExpression(&arena);
 
-        printf("%2d '%.*s'\n", token.type, token.length, token.start);
+    printf("--- ABSTRACT TREE ---\n");
+    printAST(raiz, 0);
 
-        if (token.type == TOKEN_EOF) break;
-    }
-
+    freeArena(&arena);
     munmap(sourceCode, fileSize);
 
     return 0;
