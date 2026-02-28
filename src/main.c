@@ -60,9 +60,9 @@ int main(int argc, const char* argv[]) {
 
     ASTNode* root = parseExpression(&arena);
 
-    printf("--- ABSTRACT TREE ---\n");
+    fprintf(stderr, "--- ABSTRACT TREE ---\n");
     printAST(root, 0);
-    printf("--- ASSEMBLY ---\n");
+    fprintf(stderr, "--- ASSEMBLY ---\n");
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");

@@ -88,16 +88,16 @@ static ASTNode* parseFactor(Arena* arena){
 void printAST(ASTNode* node, int depth){
     if(node == NULL) return;
     for(int i = 0; i < depth; i++){
-        printf("  ");
+        fprintf(stderr, "  ");
     }
 
     switch(node->type){
         case NODE_NUMBER:
-            printf("Number: %d\n", node->as.numberValue);
+            fprintf(stderr, "Number: %d\n", node->as.numberValue);
             break;
 
         case NODE_IDENTIFIER:
-            printf("Variable: %.*s\n", node->as.identifier.length, node->as.identifier.name);
+            fprintf(stderr, "Variable: %.*s\n", node->as.identifier.length, node->as.identifier.name);
             break;
         case NODE_BINARY_OP:{
             char op = '?';
@@ -105,7 +105,7 @@ void printAST(ASTNode* node, int depth){
             else if(node->as.binaryOp.operator == TOKEN_MINUS) op = '-';
             else if(node->as.binaryOp.operator == TOKEN_STAR) op = '*';
             else if(node->as.binaryOp.operator == TOKEN_SLASH) op = '/';
-            printf("BinaryOp: [%c]\n", op);
+            fprintf(stderr, "BinaryOp: [%c]\n", op);
             
             printAST(node->as.binaryOp.left, depth + 1);
             printAST(node->as.binaryOp.right, depth + 1);
@@ -113,6 +113,6 @@ void printAST(ASTNode* node, int depth){
         }
 
         default:
-            printf("Unknown node type\n");
+            fprintf(stderr, "Unknown node type\n");
     }
 }

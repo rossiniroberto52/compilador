@@ -1,0 +1,3 @@
+/home/rossini/compilador/CMakeFiles/compiler.dir
+/home/rossini/compilador/CMakeFiles/edit_cache.dir
+/home/rossini/compilador/CMakeFiles/rebuild_cache.dir
