@@ -8,6 +8,7 @@
 #include <unistd.h>  
 
 #include "arena.h"
+#include "codegen.h"
 #include "lexer.h"
 #include "parser.h"
 #include "arena.h"
@@ -61,6 +62,15 @@ int main(int argc, const char* argv[]) {
 
     printf("--- ABSTRACT TREE ---\n");
     printAST(root, 0);
+    printf("--- ASSEMBLY ---\n");
+    printf(".intel_syntax noprefix\n");
+    printf(".global main\n");
+    printf("main:\n");
+
+    generateAssembly(root);
+
+    printf(" pop rax\n");
+    printf("  ret\n");
 
     freeArena(&arena);
     munmap(sourceCode, fileSize);
