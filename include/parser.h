@@ -12,11 +12,13 @@ typedef enum{
     NODE_ASSIGN,
     NODE_IF,
     NODE_WHILE,
+    NODE_BLOCK,
     NODE_PRINT
 } ASTNodeType;
 
 typedef struct ASTNode {
     ASTNodeType type;
+    struct ASTNode* next;
 
     union{
         int numberValue;
@@ -44,9 +46,13 @@ typedef struct ASTNode {
             struct ASTNode* body;
         } controlFlow;
 
+        struct {
+            struct ASTNode* head;
+        } block;
+        
         struct{
             struct ASTNode* expression;
-        } print;
+        } print; 
         
     } as;
 } ASTNode;

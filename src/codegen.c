@@ -1,6 +1,8 @@
 #include "codegen.h"
 #include <stdio.h>
 
+static int labelCount = 0;
+
 void generateAssembly(ASTNode* node, SymbolTable* table) {
     if (node == NULL) return;
 
@@ -10,8 +12,46 @@ void generateAssembly(ASTNode* node, SymbolTable* table) {
         return;
     }
 
+    if(node -> type == NODE_IF){
+        int currentLabel = labelCount++;
+        generateAssembly(node->as.controlFlow.condition, table);
+        printf("    pop rax\n");
+        printf("    cmp rax, 0\n");
+        printf("    je .L%d\n", currentLabel);
+        generateAssembly(node->as.controlFlow.body, table);
+        printf(".L%d:\n", currentLabel);
+        return;
+    }
+
+    if (node->type == NODE_WHILE) {
+        int labelStart = labelCount++;
+        int labelEnd = labelCount++;
+        printf(".L%d:\n", labelStart);
+        generateAssembly(node->as.controlFlow.condition, table);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je .L%d\n", labelEnd);
+        generateAssembly(node->as.controlFlow.body, table);
+        printf("  jmp .L%d\n", labelStart);
+        printf(".L%d:\n", labelEnd);
+        return;
+    }
+
+    if (node->type == NODE_BLOCK){
+        ASTNode* current = node->as.block.head;
+        while(current != NULL){
+            generateAssembly(current, table);
+            current = current->next;
+        }
+        return;
+    }
+
     if(node->type == NODE_IDENTIFIER){
         int offset = getSymbolOffset(table, node->as.identifier.name, node->as.identifier.length);
+        if(offset == -1){
+            fprintf(stderr, "Error: Variable '%.*s' not declared\n", node->as.identifier.length, node->as.identifier.name);
+            return;
+        }
         printf("  mov rax, [rbp - %d]\n", offset);
         printf("  push rax\n");
         return;
@@ -53,6 +93,10 @@ void generateAssembly(ASTNode* node, SymbolTable* table) {
         else if (node->as.binaryOp.operator == TOKEN_SLASH) {
             printf("  cqo\n");
             printf("  idiv rbx\n");
+        }else if(node->as.binaryOp.operator == TOKEN_EQUAL_EQUAL){
+            printf("  cmp rax, rbx\n");
+            printf("  sete al\n");
+            printf("  movzx rax, al\n");
         }
         
         printf("  push rax\n");

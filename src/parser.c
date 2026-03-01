@@ -7,6 +7,8 @@ extern Token currentToken;
 extern void advanceToken();
 extern void consume(TokenType type, const char* message);
 
+ASTNode* parseBlock(Arena* arena, SymbolTable* table);
+
 static ASTNode* parseTerm(Arena* arena);
 static ASTNode* parseFactor(Arena* arena);
 
@@ -51,6 +53,28 @@ static ASTNode* parseTerm(Arena* arena){
     return node;
 }
 
+
+ASTNode* parseEquality(Arena* arena){
+    ASTNode* left = parseExpression(arena);
+
+    while(currentToken.type == TOKEN_EQUAL_EQUAL){
+        TokenType operatorType = currentToken.type;
+        advanceToken();
+
+        ASTNode* right = parseExpression(arena);
+
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_BINARY_OP;
+        node->as.binaryOp.operator = operatorType;
+        node->as.binaryOp.left = left;
+        node->as.binaryOp.right = right;
+
+        left = node;
+    }
+
+    return left;
+}
+
 static ASTNode* parseFactor(Arena* arena){
     if(currentToken.type == TOKEN_NUMBER){
         ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
@@ -84,11 +108,30 @@ static ASTNode* parseFactor(Arena* arena){
     exit(65);
 }
 
+ASTNode* parseBlock(Arena* arena, SymbolTable* table){
+    consume(TOKEN_LBRACE, "Expected '{' at the beginning of block");
+    ASTNode* blockNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+    blockNode->type = NODE_BLOCK;
+    blockNode->as.block.head = NULL;
+
+    ASTNode** current = &blockNode->as.block.head;
+
+    while(currentToken.type != TOKEN_RBRACE && currentToken.type != TOKEN_EOF){
+        ASTNode* statement = parseStatement(arena, table);
+        *current = statement;
+        current = &statement->next; 
+    }
+
+    consume(TOKEN_RBRACE, "Expected '}' at the end of block");
+    return blockNode;
+}
+
+
 ASTNode* parseStatement(Arena* arena, SymbolTable* table){
     if(currentToken.type == TOKEN_PRINT){
         advanceToken();
         consume(TOKEN_LPAREN, "Expected '(' after 'print'");
-        ASTNode* exprNode = parseExpression(arena);
+        ASTNode* exprNode = parseEquality(arena);
         consume(TOKEN_RPAREN, "Expected ')' after expression");
         consume(TOKEN_SEMICOLON, "Expected ';' after print statement");
         ASTNode* printNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
@@ -96,6 +139,41 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
         printNode->as.print.expression = exprNode;
 
         return printNode;
+    }
+
+    if (currentToken.type == TOKEN_IF){
+        advanceToken();
+
+        consume(TOKEN_LPAREN, "Expected '(' after 'if'");
+        ASTNode* conditionNode = parseEquality(arena);
+        consume(TOKEN_RPAREN, "Expected ')' after condition");
+
+        consume(TOKEN_LBRACE, "Expected '{' before if body");
+        ASTNode* bodyNode = parseStatement(arena, table);
+        consume(TOKEN_RBRACE, "Expected '}' after if body");
+
+        ASTNode* ifNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        ifNode->type = NODE_IF;
+        ifNode->as.controlFlow.condition = conditionNode;
+        ifNode->as.controlFlow.body = bodyNode;
+
+        return ifNode;
+    }
+
+    if(currentToken.type == TOKEN_WHILE){
+        advanceToken();
+
+        consume(TOKEN_LPAREN, "Expected '(' after 'while'");
+        ASTNode* conditionNode = parseEquality(arena);
+        consume(TOKEN_RPAREN, "Expected ')' after condition");
+        ASTNode* bodyNode = parseBlock(arena, table);
+
+        ASTNode* whileNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        whileNode->type = NODE_WHILE;
+        whileNode->as.controlFlow.condition = conditionNode;
+        whileNode->as.controlFlow.body = bodyNode;
+
+        return whileNode;
     }
 
     if(currentToken.type == TOKEN_IDENTIFIER){
@@ -110,7 +188,7 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
                 addSymbol(table, varName, varLength);
             }
 
-            ASTNode* exprNode = parseExpression(arena);
+            ASTNode* exprNode = parseEquality(arena);
 
             consume(TOKEN_SEMICOLON, "Expected ';' after expression");
 
@@ -124,7 +202,7 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
         }
     }
 
-    return parseExpression(arena);
+    return parseEquality(arena);
 }
 
 void printAST(ASTNode* node, int depth){
@@ -143,7 +221,8 @@ void printAST(ASTNode* node, int depth){
             break;
         case NODE_BINARY_OP:{
             char op = '?';
-            if(node->as.binaryOp.operator == TOKEN_PLUS) op = '+';
+            if(node->as.binaryOp.operator == TOKEN_EQUAL_EQUAL){fprintf(stderr, "Operator: [==]\n");}
+            else if(node->as.binaryOp.operator == TOKEN_PLUS) op = '+'; 
             else if(node->as.binaryOp.operator == TOKEN_MINUS) op = '-';
             else if(node->as.binaryOp.operator == TOKEN_STAR) op = '*';
             else if(node->as.binaryOp.operator == TOKEN_SLASH) op = '/';
@@ -153,6 +232,24 @@ void printAST(ASTNode* node, int depth){
             printAST(node->as.binaryOp.right, depth + 1);
             break;
         }
+        case NODE_IF:
+            fprintf(stderr, "If Statement:\n");
+            printAST(node->as.controlFlow.condition, depth + 1);
+            printAST(node->as.controlFlow.body, depth + 1);
+            break;
+        case NODE_WHILE:
+            fprintf(stderr, "While Statement:\n");
+            printAST(node->as.controlFlow.condition, depth + 1);
+            printAST(node->as.controlFlow.body, depth + 1);
+            break;
+        case NODE_BLOCK:
+            fprintf(stderr, "Block:\n");
+            ASTNode* curr = node->as.block.head;
+            while(curr != NULL) {
+                printAST(curr, depth + 1);
+                curr = curr->next;
+            }
+            break;
         case NODE_ASSIGN:
             fprintf(stderr, "Assign: %.*s\n", node->as.assign.length, node->as.assign.name);
             printAST(node->as.assign.expr, depth + 1);

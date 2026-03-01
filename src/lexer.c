@@ -104,7 +104,13 @@ Token scanToken() {
         case '-': return makeToken(TOKEN_MINUS);
         case '*': return makeToken(TOKEN_STAR);
         case '/': return makeToken(TOKEN_SLASH);
-        case '=': return makeToken(TOKEN_ASSIGN);
+        case '=': 
+            if(peek() == '='){
+                advance();
+                return makeToken(TOKEN_EQUAL_EQUAL);
+            }
+
+            return makeToken(TOKEN_ASSIGN);
     }
 
     if(isDigit(c)) {

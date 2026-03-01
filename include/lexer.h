@@ -24,7 +24,8 @@ typedef enum {
     TOKEN_SEMICOLON, 
     TOKEN_IF, TOKEN_WHILE, TOKEN_PRINT,
     TOKEN_EOF,        
-    TOKEN_ERROR       
+    TOKEN_ERROR,
+    TOKEN_EQUAL_EQUAL      
 } TokenType;
 
 typedef struct {
