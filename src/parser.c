@@ -85,6 +85,19 @@ static ASTNode* parseFactor(Arena* arena){
 }
 
 ASTNode* parseStatement(Arena* arena, SymbolTable* table){
+    if(currentToken.type == TOKEN_PRINT){
+        advanceToken();
+        consume(TOKEN_LPAREN, "Expected '(' after 'print'");
+        ASTNode* exprNode = parseExpression(arena);
+        consume(TOKEN_RPAREN, "Expected ')' after expression");
+        consume(TOKEN_SEMICOLON, "Expected ';' after print statement");
+        ASTNode* printNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        printNode->type = NODE_PRINT;
+        printNode->as.print.expression = exprNode;
+
+        return printNode;
+    }
+
     if(currentToken.type == TOKEN_IDENTIFIER){
         const char* varName = currentToken.start;
         int varLength = currentToken.length;
@@ -143,6 +156,10 @@ void printAST(ASTNode* node, int depth){
         case NODE_ASSIGN:
             fprintf(stderr, "Assign: %.*s\n", node->as.assign.length, node->as.assign.name);
             printAST(node->as.assign.expr, depth + 1);
+            break;
+        case NODE_PRINT:
+            fprintf(stderr, "Print Statement:\n");
+            printAST(node->as.print.expression, depth + 1); 
             break;
         default:
             fprintf(stderr, "Unknown node type\n");

@@ -17,6 +17,15 @@ void generateAssembly(ASTNode* node, SymbolTable* table) {
         return;
     }
 
+    if(node->type == NODE_PRINT){
+        generateAssembly(node->as.print.expression, table);
+        printf("  pop rsi\n\n");
+        printf("  lea rdi, [rip + .LC0]\n");
+        printf("  mov rax, 0\n");
+        printf("  call printf@PLT\n");
+        return;
+    }
+
     if(node->type == NODE_ASSIGN){
         generateAssembly(node->as.assign.expr, table);
         int offset = getSymbolOffset(table, node->as.assign.name, node->as.assign.length);

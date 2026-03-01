@@ -68,8 +68,19 @@ int main(int argc, const char* argv[]) {
         statementCount++;
     }
 
+    fprintf(stderr, "--- ABSTRACT TREE ---\n");
+    for (int i = 0; i < statementCount; i++) {
+        printAST(statements[i], 0);
+    }
+
     fprintf(stderr, "--- ASSEMBLY ---\n");
     printf(".intel_syntax noprefix\n");
+
+    printf(".data\n");
+    printf(".LC0:\n");
+    printf("  .string \"%%d\\n\"\n");
+
+    printf(".text\n");
     printf(".global main\n");
     printf("main:\n");
     
