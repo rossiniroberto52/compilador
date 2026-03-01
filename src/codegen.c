@@ -97,8 +97,78 @@ void generateAssembly(ASTNode* node, SymbolTable* table) {
             printf("  cmp rax, rbx\n");
             printf("  sete al\n");
             printf("  movzx rax, al\n");
+        }else if(node->as.binaryOp.operator == TOKEN_LESS){
+            printf("  cmp rax, rbx\n");
+            printf("  setl al\n");
+            printf("  movzx rax, al\n");
+        }else if(node->as.binaryOp.operator == TOKEN_LESS_EQUAL){
+            printf("  cmp rax, rbx\n");
+            printf("  setle al\n");
+            printf("  movzx rax, al\n");
+        }else if(node->as.binaryOp.operator == TOKEN_GREATER){
+            printf("  cmp rax, rbx\n");
+            printf("  setg al\n");
+            printf("  movzx rax, al\n");
+        }else if(node->as.binaryOp.operator == TOKEN_GREATER_EQUAL){
+            printf("  cmp rax, rbx\n");
+            printf("  setge al\n");
+            printf("  movzx rax, al\n");
+        }else if(node->as.binaryOp.operator == TOKEN_BANG_EQUAL){
+            printf("  cmp rax, rbx\n");
+            printf("  setne al\n");
+            printf("  movzx rax, al\n");
         }
         
+        printf("  push rax\n");
+        return;
+    }
+
+    if (node->type == NODE_LOGICAL_AND) {
+        int labelFalse = labelCount++;
+        int labelEnd = labelCount++;
+
+        generateAssembly(node->as.binaryOp.left, table);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je .L%d\n", labelFalse);
+
+        generateAssembly(node->as.binaryOp.right, table);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je .L%d\n", labelFalse);
+
+        printf("  mov rax, 1\n");
+        printf("  jmp .L%d\n", labelEnd);
+
+        printf(".L%d:\n", labelFalse);
+        printf("  mov rax, 0\n");
+
+        printf(".L%d:\n", labelEnd);
+        printf("  push rax\n");
+        return;
+    }
+
+    if (node->type == NODE_LOGICAL_OR) {
+        int labelTrue = labelCount++;
+        int labelEnd = labelCount++;
+
+        generateAssembly(node->as.binaryOp.left, table);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  jne .L%d\n", labelTrue);
+
+        generateAssembly(node->as.binaryOp.right, table);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  jne .L%d\n", labelTrue);
+
+        printf("  mov rax, 0\n");
+        printf("  jmp .L%d\n", labelEnd);
+
+        printf(".L%d:\n", labelTrue);
+        printf("  mov rax, 1\n");
+
+        printf(".L%d:\n", labelEnd);
         printf("  push rax\n");
         return;
     }

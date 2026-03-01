@@ -109,8 +109,41 @@ Token scanToken() {
                 advance();
                 return makeToken(TOKEN_EQUAL_EQUAL);
             }
+            return makeToken(TOKEN_ASSIGN); 
 
-            return makeToken(TOKEN_ASSIGN);
+        case '!':
+            if(peek() == '='){
+                advance();
+                return makeToken(TOKEN_BANG_EQUAL);
+            }
+           
+            return makeToken(TOKEN_ERROR);
+
+        case '<':
+            if(peek() == '='){
+                advance();
+                return makeToken(TOKEN_LESS_EQUAL);
+            }
+            return makeToken(TOKEN_LESS);
+
+        case '>':
+            if(peek() == '='){
+                advance();
+                return makeToken(TOKEN_GREATER_EQUAL);
+            }
+            return makeToken(TOKEN_GREATER);
+        case '&':
+            if(peek() == '&'){
+                advance();
+                return makeToken(TOKEN_LOGICAL_AND);
+            }
+            return makeToken(TOKEN_ERROR);
+        case '|':
+            if(peek() == '|'){
+                advance();
+                return makeToken(TOKEN_LOGICAL_OR);
+            }
+            return makeToken(TOKEN_ERROR);
     }
 
     if(isDigit(c)) {

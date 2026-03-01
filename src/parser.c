@@ -8,72 +8,13 @@ extern void advanceToken();
 extern void consume(TokenType type, const char* message);
 
 ASTNode* parseBlock(Arena* arena, SymbolTable* table);
-
+ASTNode* parseStatement(Arena* arena, SymbolTable* table);
+ASTNode* parseLogicalOr(Arena* arena);
+ASTNode* parseLogicalAnd(Arena* arena);
+ASTNode* parseEquality(Arena* arena);
+ASTNode* parseExpression(Arena* arena);
 static ASTNode* parseTerm(Arena* arena);
 static ASTNode* parseFactor(Arena* arena);
-
-ASTNode* parseExpression(Arena* arena){
-    ASTNode* node = parseTerm(arena);
-    while(currentToken.type == TOKEN_PLUS || currentToken.type == TOKEN_MINUS){
-        TokenType  operator =  currentToken.type;
-        advanceToken();
-
-        ASTNode* rightnode = parseTerm(arena);
-
-        ASTNode* binaryNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
-
-        binaryNode->type = NODE_BINARY_OP;
-        binaryNode->as.binaryOp.left = node;
-        binaryNode->as.binaryOp.right = rightnode;
-        binaryNode->as.binaryOp.operator = operator;
-        node = binaryNode;
-    }
-    return node;
-}
-
-static ASTNode* parseTerm(Arena* arena){
-    ASTNode* node = parseFactor(arena);
-
-    while(currentToken.type == TOKEN_STAR || currentToken.type == TOKEN_SLASH){
-        TokenType operator = currentToken.type;
-        advanceToken();
-
-        ASTNode* rigthtNode = parseFactor(arena);
-
-        ASTNode* binaryNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
-        
-        binaryNode->type = NODE_BINARY_OP;
-        binaryNode->as.binaryOp.left = node;
-        binaryNode-> as.binaryOp.right = rigthtNode;
-        binaryNode->as.binaryOp.operator = operator;
-
-        node = binaryNode;
-    }
-
-    return node;
-}
-
-
-ASTNode* parseEquality(Arena* arena){
-    ASTNode* left = parseExpression(arena);
-
-    while(currentToken.type == TOKEN_EQUAL_EQUAL){
-        TokenType operatorType = currentToken.type;
-        advanceToken();
-
-        ASTNode* right = parseExpression(arena);
-
-        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
-        node->type = NODE_BINARY_OP;
-        node->as.binaryOp.operator = operatorType;
-        node->as.binaryOp.left = left;
-        node->as.binaryOp.right = right;
-
-        left = node;
-    }
-
-    return left;
-}
 
 static ASTNode* parseFactor(Arena* arena){
     if(currentToken.type == TOKEN_NUMBER){
@@ -99,13 +40,111 @@ static ASTNode* parseFactor(Arena* arena){
 
     if(currentToken.type == TOKEN_LPAREN){
         advanceToken();
-        ASTNode* node = parseExpression(arena);
+        ASTNode* node = parseLogicalOr(arena);
         consume(TOKEN_RPAREN, "Expected ')' after expression");
         return node;
     }
 
     fprintf(stderr, "Error: Expected expression at line %d.\n", currentToken.line);
     exit(65);
+}
+
+static ASTNode* parseTerm(Arena* arena){
+    ASTNode* node = parseFactor(arena);
+
+    while(currentToken.type == TOKEN_STAR || currentToken.type == TOKEN_SLASH){
+        TokenType operator = currentToken.type;
+        advanceToken();
+
+        ASTNode* rigthtNode = parseFactor(arena);
+
+        ASTNode* binaryNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        
+        binaryNode->type = NODE_BINARY_OP;
+        binaryNode->as.binaryOp.left = node;
+        binaryNode->as.binaryOp.right = rigthtNode;
+        binaryNode->as.binaryOp.operator = operator;
+
+        node = binaryNode;
+    }
+
+    return node;
+}
+
+ASTNode* parseExpression(Arena* arena){
+    ASTNode* node = parseTerm(arena);
+    while(currentToken.type == TOKEN_PLUS || currentToken.type == TOKEN_MINUS){
+        TokenType  operator =  currentToken.type;
+        advanceToken();
+
+        ASTNode* rightnode = parseTerm(arena);
+
+        ASTNode* binaryNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+
+        binaryNode->type = NODE_BINARY_OP;
+        binaryNode->as.binaryOp.left = node;
+        binaryNode->as.binaryOp.right = rightnode;
+        binaryNode->as.binaryOp.operator = operator;
+        node = binaryNode;
+    }
+    return node;
+}
+
+ASTNode* parseEquality(Arena* arena){
+    ASTNode* left = parseExpression(arena);
+
+    while(currentToken.type == TOKEN_EQUAL_EQUAL || 
+          currentToken.type == TOKEN_BANG_EQUAL ||
+          currentToken.type == TOKEN_LESS ||
+          currentToken.type == TOKEN_LESS_EQUAL ||
+          currentToken.type == TOKEN_GREATER ||
+          currentToken.type == TOKEN_GREATER_EQUAL) {
+        
+        TokenType operatorType = currentToken.type;
+        advanceToken();
+
+        ASTNode* right = parseExpression(arena);
+
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_BINARY_OP;
+        node->as.binaryOp.operator = operatorType;
+        node->as.binaryOp.left = left;
+        node->as.binaryOp.right = right;
+
+        left = node;
+    }
+
+    return left;
+}
+
+ASTNode* parseLogicalAnd(Arena* arena){
+    ASTNode* left = parseEquality(arena);
+    while(currentToken.type == TOKEN_LOGICAL_AND){
+        advanceToken();
+        ASTNode* right = parseEquality(arena);
+
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_LOGICAL_AND;
+        node->as.binaryOp.left = left;
+        node->as.binaryOp.right = right;
+        left = node;
+    }
+    return left; 
+}
+
+ASTNode* parseLogicalOr(Arena* arena){
+    ASTNode* left = parseLogicalAnd(arena);
+    while(currentToken.type == TOKEN_LOGICAL_OR){
+        advanceToken();
+        ASTNode* right = parseLogicalAnd(arena);
+
+        ASTNode* node = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+        node->type = NODE_LOGICAL_OR;
+        node->as.binaryOp.left = left;
+        node->as.binaryOp.right = right;
+        left = node;
+    }
+    return left;
 }
 
 ASTNode* parseBlock(Arena* arena, SymbolTable* table){
@@ -126,12 +165,11 @@ ASTNode* parseBlock(Arena* arena, SymbolTable* table){
     return blockNode;
 }
 
-
 ASTNode* parseStatement(Arena* arena, SymbolTable* table){
     if(currentToken.type == TOKEN_PRINT){
         advanceToken();
         consume(TOKEN_LPAREN, "Expected '(' after 'print'");
-        ASTNode* exprNode = parseEquality(arena);
+        ASTNode* exprNode = parseLogicalOr(arena);
         consume(TOKEN_RPAREN, "Expected ')' after expression");
         consume(TOKEN_SEMICOLON, "Expected ';' after print statement");
         ASTNode* printNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
@@ -145,7 +183,7 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
         advanceToken();
 
         consume(TOKEN_LPAREN, "Expected '(' after 'if'");
-        ASTNode* conditionNode = parseEquality(arena);
+        ASTNode* conditionNode = parseLogicalOr(arena);
         consume(TOKEN_RPAREN, "Expected ')' after condition");
 
         consume(TOKEN_LBRACE, "Expected '{' before if body");
@@ -164,7 +202,7 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
         advanceToken();
 
         consume(TOKEN_LPAREN, "Expected '(' after 'while'");
-        ASTNode* conditionNode = parseEquality(arena);
+        ASTNode* conditionNode = parseLogicalOr(arena); 
         consume(TOKEN_RPAREN, "Expected ')' after condition");
         ASTNode* bodyNode = parseBlock(arena, table);
 
@@ -188,7 +226,7 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
                 addSymbol(table, varName, varLength);
             }
 
-            ASTNode* exprNode = parseEquality(arena);
+            ASTNode* exprNode = parseLogicalOr(arena);
 
             consume(TOKEN_SEMICOLON, "Expected ';' after expression");
 
@@ -202,7 +240,7 @@ ASTNode* parseStatement(Arena* arena, SymbolTable* table){
         }
     }
 
-    return parseEquality(arena);
+    return parseLogicalOr(arena);
 }
 
 void printAST(ASTNode* node, int depth){
@@ -215,23 +253,37 @@ void printAST(ASTNode* node, int depth){
         case NODE_NUMBER:
             fprintf(stderr, "Number: %d\n", node->as.numberValue);
             break;
-
         case NODE_IDENTIFIER:
             fprintf(stderr, "Variable: %.*s\n", node->as.identifier.length, node->as.identifier.name);
             break;
         case NODE_BINARY_OP:{
-            char op = '?';
-            if(node->as.binaryOp.operator == TOKEN_EQUAL_EQUAL){fprintf(stderr, "Operator: [==]\n");}
-            else if(node->as.binaryOp.operator == TOKEN_PLUS) op = '+'; 
-            else if(node->as.binaryOp.operator == TOKEN_MINUS) op = '-';
-            else if(node->as.binaryOp.operator == TOKEN_STAR) op = '*';
-            else if(node->as.binaryOp.operator == TOKEN_SLASH) op = '/';
-            fprintf(stderr, "BinaryOp: [%c]\n", op);
+            const char* opStr = "?";
+            if(node->as.binaryOp.operator == TOKEN_EQUAL_EQUAL) opStr = "==";
+            else if(node->as.binaryOp.operator == TOKEN_BANG_EQUAL) opStr = "!=";
+            else if(node->as.binaryOp.operator == TOKEN_LESS) opStr = "<";
+            else if(node->as.binaryOp.operator == TOKEN_LESS_EQUAL) opStr = "<=";
+            else if(node->as.binaryOp.operator == TOKEN_GREATER) opStr = ">";
+            else if(node->as.binaryOp.operator == TOKEN_GREATER_EQUAL) opStr = ">=";
+            else if(node->as.binaryOp.operator == TOKEN_PLUS) opStr = "+"; 
+            else if(node->as.binaryOp.operator == TOKEN_MINUS) opStr = "-";
+            else if(node->as.binaryOp.operator == TOKEN_STAR) opStr = "*";
+            else if(node->as.binaryOp.operator == TOKEN_SLASH) opStr = "/";
             
+            fprintf(stderr, "BinaryOp: [%s]\n", opStr);
             printAST(node->as.binaryOp.left, depth + 1);
             printAST(node->as.binaryOp.right, depth + 1);
             break;
         }
+        case NODE_LOGICAL_AND:
+            fprintf(stderr, "Logical AND [&&]\n");
+            printAST(node->as.binaryOp.left, depth + 1);
+            printAST(node->as.binaryOp.right, depth + 1);
+            break;
+        case NODE_LOGICAL_OR: 
+            fprintf(stderr, "Logical OR [||]\n");
+            printAST(node->as.binaryOp.left, depth + 1);
+            printAST(node->as.binaryOp.right, depth + 1);
+            break;
         case NODE_IF:
             fprintf(stderr, "If Statement:\n");
             printAST(node->as.controlFlow.condition, depth + 1);

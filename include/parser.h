@@ -13,6 +13,8 @@ typedef enum{
     NODE_IF,
     NODE_WHILE,
     NODE_BLOCK,
+    NODE_LOGICAL_AND,
+    NODE_LOGICAL_OR,
     NODE_PRINT
 } ASTNodeType;
 
