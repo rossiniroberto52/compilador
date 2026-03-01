@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "symbol.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -83,7 +84,35 @@ static ASTNode* parseFactor(Arena* arena){
     exit(65);
 }
 
+ASTNode* parseStatement(Arena* arena, SymbolTable* table){
+    if(currentToken.type == TOKEN_IDENTIFIER){
+        const char* varName = currentToken.start;
+        int varLength = currentToken.length;
 
+        advanceToken();
+
+        if(currentToken.type == TOKEN_ASSIGN){
+            advanceToken();
+            if(getSymbolOffset(table, varName, varLength) == -1){
+                addSymbol(table, varName, varLength);
+            }
+
+            ASTNode* exprNode = parseExpression(arena);
+
+            consume(TOKEN_SEMICOLON, "Expected ';' after expression");
+
+            ASTNode* assignNode = (ASTNode*)arenaAlloc(arena, sizeof(ASTNode));
+            assignNode->type = NODE_ASSIGN;
+            assignNode->as.assign.name = varName;
+            assignNode->as.assign.length = varLength;
+            assignNode->as.assign.expr = exprNode;
+
+            return assignNode;
+        }
+    }
+
+    return parseExpression(arena);
+}
 
 void printAST(ASTNode* node, int depth){
     if(node == NULL) return;
@@ -111,7 +140,10 @@ void printAST(ASTNode* node, int depth){
             printAST(node->as.binaryOp.right, depth + 1);
             break;
         }
-
+        case NODE_ASSIGN:
+            fprintf(stderr, "Assign: %.*s\n", node->as.assign.length, node->as.assign.name);
+            printAST(node->as.assign.expr, depth + 1);
+            break;
         default:
             fprintf(stderr, "Unknown node type\n");
     }

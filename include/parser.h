@@ -2,6 +2,7 @@
 #define PARSER_H
 
 #include "lexer.h"
+#include "symbol.h"
 #include "arena.h" 
 
 typedef enum{
@@ -35,7 +36,7 @@ typedef struct ASTNode {
         struct {
             const char* name;
             int length;
-            struct ASTNode* value;
+            struct ASTNode* expr;
         } assign;
 
         struct{
@@ -52,6 +53,7 @@ typedef struct ASTNode {
 
 
 ASTNode* parseExpression(Arena* arena);
+ASTNode* parseStatement(Arena* arena, SymbolTable* table);
 void printAST(ASTNode* node, int indent);
 
 #endif

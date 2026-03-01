@@ -72,6 +72,7 @@ CMakeFiles/compiler.dir/src/codegen.c.o
  /home/rossini/compilador/include/codegen.h
  /home/rossini/compilador/include/lexer.h
  /home/rossini/compilador/include/parser.h
+ /home/rossini/compilador/include/symbol.h
  /usr/include/alloca.h
  /usr/include/ctype.h
  /usr/include/endian.h
@@ -168,6 +169,7 @@ CMakeFiles/compiler.dir/src/lexer.c.o
  /home/rossini/compilador/include/arena.h
  /home/rossini/compilador/include/lexer.h
  /home/rossini/compilador/include/parser.h
+ /home/rossini/compilador/include/symbol.h
  /usr/include/alloca.h
  /usr/include/ctype.h
  /usr/include/endian.h
@@ -265,6 +267,7 @@ CMakeFiles/compiler.dir/src/main.c.o
  /home/rossini/compilador/include/codegen.h
  /home/rossini/compilador/include/lexer.h
  /home/rossini/compilador/include/parser.h
+ /home/rossini/compilador/include/symbol.h
  /usr/include/alloca.h
  /usr/include/ctype.h
  /usr/include/endian.h
@@ -361,6 +364,7 @@ CMakeFiles/compiler.dir/src/parser.c.o
  /home/rossini/compilador/include/arena.h
  /home/rossini/compilador/include/lexer.h
  /home/rossini/compilador/include/parser.h
+ /home/rossini/compilador/include/symbol.h
  /usr/include/alloca.h
  /usr/include/ctype.h
  /usr/include/endian.h
@@ -450,5 +454,26 @@ CMakeFiles/compiler.dir/src/parser.c.o
  /usr/include/x86_64-linux-gnu/sys/stat.h
  /usr/include/x86_64-linux-gnu/sys/types.h
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
+
+CMakeFiles/compiler.dir/src/symbol.c.o
+ /home/rossini/compilador/src/symbol.c
+ /home/rossini/compilador/include/symbol.h
+ /usr/include/features-time64.h
+ /usr/include/features.h
+ /usr/include/stdc-predef.h
+ /usr/include/string.h
+ /usr/include/strings.h
+ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h
+ /usr/include/x86_64-linux-gnu/bits/long-double.h
+ /usr/include/x86_64-linux-gnu/bits/string_fortified.h
+ /usr/include/x86_64-linux-gnu/bits/strings_fortified.h
+ /usr/include/x86_64-linux-gnu/bits/timesize.h
+ /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/locale_t.h
+ /usr/include/x86_64-linux-gnu/bits/wordsize.h
+ /usr/include/x86_64-linux-gnu/gnu/stubs-64.h
+ /usr/include/x86_64-linux-gnu/gnu/stubs.h
+ /usr/include/x86_64-linux-gnu/sys/cdefs.h
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
 

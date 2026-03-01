@@ -1,7 +1,7 @@
 #include "codegen.h"
 #include <stdio.h>
 
-void generateAssembly(ASTNode* node) {
+void generateAssembly(ASTNode* node, SymbolTable* table) {
     if (node == NULL) return;
 
     if (node->type == NODE_NUMBER) {
@@ -10,9 +10,24 @@ void generateAssembly(ASTNode* node) {
         return;
     }
 
+    if(node->type == NODE_IDENTIFIER){
+        int offset = getSymbolOffset(table, node->as.identifier.name, node->as.identifier.length);
+        printf("  mov rax, [rbp - %d]\n", offset);
+        printf("  push rax\n");
+        return;
+    }
+
+    if(node->type == NODE_ASSIGN){
+        generateAssembly(node->as.assign.expr, table);
+        int offset = getSymbolOffset(table, node->as.assign.name, node->as.assign.length);
+        printf("  pop rax\n");
+        printf("  mov [rbp - %d], rax\n", offset);
+        return;
+    }
+
     if (node->type == NODE_BINARY_OP) {
-        generateAssembly(node->as.binaryOp.left);
-        generateAssembly(node->as.binaryOp.right);
+        generateAssembly(node->as.binaryOp.left, table);
+        generateAssembly(node->as.binaryOp.right, table);
 
         printf("  pop rbx\n"); 
         printf("  pop rax\n"); 

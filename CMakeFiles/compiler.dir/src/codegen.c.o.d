@@ -83,4 +83,5 @@ CMakeFiles/compiler.dir/src/codegen.c.o: \
  /usr/include/x86_64-linux-gnu/bits/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+ /home/rossini/compilador/include/symbol.h \
  /home/rossini/compilador/include/arena.h

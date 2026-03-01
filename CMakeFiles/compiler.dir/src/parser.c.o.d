@@ -82,4 +82,6 @@ CMakeFiles/compiler.dir/src/parser.c.o: \
  /usr/include/x86_64-linux-gnu/bits/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
- /home/rossini/compilador/include/arena.h
+ /home/rossini/compilador/include/symbol.h \
+ /home/rossini/compilador/include/arena.h \
+ /home/rossini/compilador/include/symbol.h

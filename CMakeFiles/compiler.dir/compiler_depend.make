@@ -70,6 +70,7 @@ CMakeFiles/compiler.dir/src/codegen.c.o: src/codegen.c \
   include/codegen.h \
   include/lexer.h \
   include/parser.h \
+  include/symbol.h \
   /usr/include/alloca.h \
   /usr/include/ctype.h \
   /usr/include/endian.h \
@@ -165,6 +166,7 @@ CMakeFiles/compiler.dir/src/lexer.c.o: src/lexer.c \
   include/arena.h \
   include/lexer.h \
   include/parser.h \
+  include/symbol.h \
   /usr/include/alloca.h \
   /usr/include/ctype.h \
   /usr/include/endian.h \
@@ -261,6 +263,7 @@ CMakeFiles/compiler.dir/src/main.c.o: src/main.c \
   include/codegen.h \
   include/lexer.h \
   include/parser.h \
+  include/symbol.h \
   /usr/include/alloca.h \
   /usr/include/ctype.h \
   /usr/include/endian.h \
@@ -356,6 +359,7 @@ CMakeFiles/compiler.dir/src/parser.c.o: src/parser.c \
   include/arena.h \
   include/lexer.h \
   include/parser.h \
+  include/symbol.h \
   /usr/include/alloca.h \
   /usr/include/ctype.h \
   /usr/include/endian.h \
@@ -447,6 +451,28 @@ CMakeFiles/compiler.dir/src/parser.c.o: src/parser.c \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
 
+CMakeFiles/compiler.dir/src/symbol.c.o: src/symbol.c \
+  include/symbol.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
+
+
+src/symbol.c:
 
 src/parser.c:
 
@@ -463,8 +489,6 @@ src/lexer.c:
 /usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
 
 /usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/x86_64-linux-gnu/bits/mman-shared.h:
 
 /usr/include/x86_64-linux-gnu/bits/mman-map-flags-generic.h:
 
@@ -487,6 +511,10 @@ src/lexer.c:
 /usr/include/strings.h:
 
 /usr/include/fcntl.h:
+
+/usr/include/x86_64-linux-gnu/bits/mman-shared.h:
+
+include/symbol.h:
 
 include/parser.h:
 

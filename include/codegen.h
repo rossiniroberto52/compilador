@@ -2,7 +2,8 @@
 #define CODEGEN_H
 
 #include "parser.h"
+#include "symbol.h"
 
-void generateAssembly(ASTNode* node);
+void generateAssembly(ASTNode* node, SymbolTable* table);
 
 #endif

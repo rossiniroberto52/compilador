@@ -249,6 +249,30 @@ src/parser.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/parser.c.s
 .PHONY : src/parser.c.s
 
+src/symbol.o: src/symbol.c.o
+.PHONY : src/symbol.o
+
+# target to build an object file
+src/symbol.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbol.c.o
+.PHONY : src/symbol.c.o
+
+src/symbol.i: src/symbol.c.i
+.PHONY : src/symbol.i
+
+# target to preprocess a source file
+src/symbol.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbol.c.i
+.PHONY : src/symbol.c.i
+
+src/symbol.s: src/symbol.c.s
+.PHONY : src/symbol.s
+
+# target to generate assembly for a file
+src/symbol.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbol.c.s
+.PHONY : src/symbol.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -273,6 +297,9 @@ help:
 	@echo "... src/parser.o"
 	@echo "... src/parser.i"
 	@echo "... src/parser.s"
+	@echo "... src/symbol.o"
+	@echo "... src/symbol.i"
+	@echo "... src/symbol.s"
 .PHONY : help
 
 

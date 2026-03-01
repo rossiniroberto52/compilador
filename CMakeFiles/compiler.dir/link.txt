@@ -1,1 +1,1 @@
-/usr/bin/cc  -Wall -Wextra -O3  -Wl,-z,noexecstack CMakeFiles/compiler.dir/src/main.c.o CMakeFiles/compiler.dir/src/lexer.c.o CMakeFiles/compiler.dir/src/parser.c.o CMakeFiles/compiler.dir/src/arena.c.o CMakeFiles/compiler.dir/src/codegen.c.o -o compiler 
+/usr/bin/cc  -Wall -Wextra -O3  -Wl,-z,noexecstack CMakeFiles/compiler.dir/src/main.c.o CMakeFiles/compiler.dir/src/lexer.c.o CMakeFiles/compiler.dir/src/parser.c.o CMakeFiles/compiler.dir/src/arena.c.o CMakeFiles/compiler.dir/src/codegen.c.o CMakeFiles/compiler.dir/src/symbol.c.o -o compiler 

@@ -13,6 +13,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/rossini/compilador/src/lexer.c" "CMakeFiles/compiler.dir/src/lexer.c.o" "gcc" "CMakeFiles/compiler.dir/src/lexer.c.o.d"
   "/home/rossini/compilador/src/main.c" "CMakeFiles/compiler.dir/src/main.c.o" "gcc" "CMakeFiles/compiler.dir/src/main.c.o.d"
   "/home/rossini/compilador/src/parser.c" "CMakeFiles/compiler.dir/src/parser.c.o" "gcc" "CMakeFiles/compiler.dir/src/parser.c.o.d"
+  "/home/rossini/compilador/src/symbol.c" "CMakeFiles/compiler.dir/src/symbol.c.o" "gcc" "CMakeFiles/compiler.dir/src/symbol.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

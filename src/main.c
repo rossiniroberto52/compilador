@@ -8,6 +8,7 @@
 #include <unistd.h>  
 
 #include "arena.h"
+#include "symbol.h"
 #include "codegen.h"
 #include "lexer.h"
 #include "parser.h"
@@ -55,21 +56,34 @@ int main(int argc, const char* argv[]) {
     
     Arena arena;
     initArena(&arena, 1024 * 1024); 
-
+    SymbolTable table;
+    initSymbolTable(&table);
     advanceToken();
 
-    ASTNode* root = parseExpression(&arena);
+    ASTNode* statements[512]; 
+    int statementCount = 0;
 
-    fprintf(stderr, "--- ABSTRACT TREE ---\n");
-    printAST(root, 0);
+    while (currentToken.type != TOKEN_EOF) {
+        statements[statementCount] = parseStatement(&arena, &table);
+        statementCount++;
+    }
+
     fprintf(stderr, "--- ASSEMBLY ---\n");
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
+    
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    printf("  sub rsp, %d\n", table.currentOffset);
 
-    generateAssembly(root);
+    for (int i = 0; i < statementCount; i++) {
+        generateAssembly(statements[i], &table);
+    }
 
-    printf(" pop rax\n");
+    printf("  mov rax, 0\n");
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
     printf("  ret\n");
 
     freeArena(&arena);

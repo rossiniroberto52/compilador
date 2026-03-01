@@ -81,9 +81,11 @@ CMakeFiles/compiler.dir/src/main.c.o: /home/rossini/compilador/src/main.c \
  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
  /home/rossini/compilador/include/arena.h \
+ /home/rossini/compilador/include/symbol.h \
  /home/rossini/compilador/include/codegen.h \
  /home/rossini/compilador/include/parser.h \
  /home/rossini/compilador/include/lexer.h \
+ /home/rossini/compilador/include/symbol.h \
  /home/rossini/compilador/include/arena.h \
  /home/rossini/compilador/include/lexer.h \
  /home/rossini/compilador/include/parser.h

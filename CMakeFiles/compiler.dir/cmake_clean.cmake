@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/compiler.dir/src/main.c.o.d"
   "CMakeFiles/compiler.dir/src/parser.c.o"
   "CMakeFiles/compiler.dir/src/parser.c.o.d"
+  "CMakeFiles/compiler.dir/src/symbol.c.o"
+  "CMakeFiles/compiler.dir/src/symbol.c.o.d"
   "compiler"
   "compiler.pdb"
 )

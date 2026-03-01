@@ -21,7 +21,7 @@ typedef enum {
     TOKEN_RPAREN,     
     TOKEN_LBRACE,    
     TOKEN_RBRACE,     
-    TOKEN_SEMICOLON,  
+    TOKEN_SEMICOLON, 
     TOKEN_IF, TOKEN_WHILE, TOKEN_PRINT,
     TOKEN_EOF,        
     TOKEN_ERROR       

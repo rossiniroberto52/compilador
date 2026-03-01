@@ -83,4 +83,5 @@ CMakeFiles/compiler.dir/src/lexer.c.o: \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
  /home/rossini/compilador/include/parser.h \
  /home/rossini/compilador/include/lexer.h \
+ /home/rossini/compilador/include/symbol.h \
  /home/rossini/compilador/include/arena.h
