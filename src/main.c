@@ -43,9 +43,15 @@ char* mapFileToMem(const char* path, size_t* tamOut) {
 }
 
 
-int main(int argc, const char* argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: compilator <path_to_source>\n");
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <path_to_source>\n", argv[0]);
+        exit(64);
+    }
+
+    char* ext = strrchr(argv[1], '.');
+    if(ext == NULL || strcmp(ext, ".qz") != 0){
+        fprintf(stderr, "Error: Source file must have .qz extension\n");
         exit(64);
     }
 

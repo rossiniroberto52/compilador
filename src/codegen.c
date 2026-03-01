@@ -47,12 +47,12 @@ void generateAssembly(ASTNode* node, SymbolTable* table) {
     }
 
     if(node->type == NODE_IDENTIFIER){
-        int offset = getSymbolOffset(table, node->as.identifier.name, node->as.identifier.length);
-        if(offset == -1){
+        //int offset = getSymbolOffset(table, node->as.identifier.name, node->as.identifier.length);
+        if(node->as.identifier.offset == -1){
             fprintf(stderr, "Error: Variable '%.*s' not declared\n", node->as.identifier.length, node->as.identifier.name);
             return;
         }
-        printf("  mov rax, [rbp - %d]\n", offset);
+        printf("  mov rax, [rbp - %d]\n", node->as.identifier.offset);
         printf("  push rax\n");
         return;
     }
@@ -68,9 +68,9 @@ void generateAssembly(ASTNode* node, SymbolTable* table) {
 
     if(node->type == NODE_ASSIGN){
         generateAssembly(node->as.assign.expr, table);
-        int offset = getSymbolOffset(table, node->as.assign.name, node->as.assign.length);
+        //int offset = getSymbolOffset(table, node->as.assign.name, node->as.assign.length);
         printf("  pop rax\n");
-        printf("  mov [rbp - %d], rax\n", offset);
+        printf("  mov [rbp - %d], rax\n", node->as.assign.offset);
         return;
     }
 

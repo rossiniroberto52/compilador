@@ -8,53 +8,28 @@ main:
   push rbp
   mov rbp, rsp
   sub rsp, 8
-  mov rax, 0
+  mov rax, 10
   push rax
   pop rax
   mov [rbp - 8], rax
   mov rax, [rbp - 8]
   push rax
-  mov rax, 0
-  push rax
-  pop rbx
-  pop rax
-  cmp rax, rbx
-  setne al
-  movzx rax, al
-  push rax
-  pop rax
-  cmp rax, 0
-  je .L1
   mov rax, 10
   push rax
-  mov rax, [rbp - 8]
-  push rax
-  pop rbx
-  pop rax
-  cqo
-  idiv rbx
-  push rax
-  mov rax, 1
-  push rax
   pop rbx
   pop rax
   cmp rax, rbx
-  setg al
+  sete al
   movzx rax, al
-  push rax
-  pop rax
-  cmp rax, 0
-  je .L1
-  mov rax, 1
-  jmp .L2
-.L1:
-  mov rax, 0
-.L2:
   push rax
     pop rax
     cmp rax, 0
     je .L0
-  mov rax, 1
+  mov rax, 5
+  push rax
+  pop rax
+  mov [rbp - 8], rax
+  mov rax, [rbp - 8]
   push rax
   pop rsi
 
@@ -62,7 +37,7 @@ main:
   mov rax, 0
   call printf@PLT
 .L0:
-  mov rax, 99
+  mov rax, [rbp - 8]
   push rax
   pop rsi
 

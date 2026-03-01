@@ -29,6 +29,7 @@ typedef struct ASTNode {
         {
             const char* name;
             int length;
+            int offset;
         } identifier;
 
         struct {
@@ -41,6 +42,7 @@ typedef struct ASTNode {
             const char* name;
             int length;
             struct ASTNode* expr;
+            int offset;
         } assign;
 
         struct{
@@ -60,7 +62,7 @@ typedef struct ASTNode {
 } ASTNode;
 
 
-ASTNode* parseExpression(Arena* arena);
+ASTNode* parseExpression(Arena* arena, SymbolTable* table);
 ASTNode* parseStatement(Arena* arena, SymbolTable* table);
 void printAST(ASTNode* node, int indent);
 
