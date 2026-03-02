@@ -19,18 +19,6 @@ O Quartz (`.qz`) não é um interpretador. É um compilador de dois passos (Two-
 
 ---
 
-## 🏗️ Decisões de Arquitetura (O Silício)
-
-* **A Tabela de Símbolos Plana (Flat Symbol Table):** [POR QUE VOCÊ ESCOLHEU ESSA ABORDAGEM EM VEZ DE UMA PILHA DE TABELAS? EXPLIQUE AQUI O CACHE DA CPU]
-    
-* **Controle de Escopo Léxico (Amnésia Programada):**
-    [COMO AS VARIÁVEIS NASCEM E MORREM NOS BLOCOS { }? EXPLIQUE AQUI A MECÂNICA DE DEPTH]
-
-* **O Curto-Circuito Lógico (Short-Circuit):**
-    [COMO OS OPERADORES && E || IMPEDEM QUE O KERNEL EXPLODA POR DIVISÃO POR ZERO? EXPLIQUE AQUI OS SALTOS JE/JNE]
-
----
-
 ## 🚀 Como Compilar e Executar
 
 **Pré-requisitos:** `gcc`, `make` e ambiente Linux (ou WSL).
