@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./images/Gemini_Generated_Image_sqe50ssqe50ssqe5-removebg-preview.png" alt="Quartz Compiler Logo" width="200"/>
+  <img src="./images/logo.png" alt="Quartz Compiler Logo" width="200"/>
 
   # Quartz Compiler
   **Um compilador de tipagem estrita construído do zero em C, traduzindo lógica direta para Assembly x86_64.**
