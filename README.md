@@ -36,6 +36,7 @@ echo "x = 10; if (x == 10) { print(1); }" > script.qz
 # 4. Linkar e Executar o binário nativo
 gcc saida.s -o script_executavel
 ./script_executavel
+```
 
 ---
 
